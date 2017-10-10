@@ -1,0 +1,16 @@
+{
+    "name": "yonh/schema-meta-info-helper",
+    "description": "mysql schema meta data helper Edit",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "yonh",
+            "email": "azssjli@163.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Yonh\\SchemaMetaInfoHelper\\": "src/"}
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
