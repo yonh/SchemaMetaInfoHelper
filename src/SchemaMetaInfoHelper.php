@@ -12,6 +12,7 @@ use PDO;
  */
 class SchemaMetaInfoHelper
 {
+
     private $dbname = "information_schema";
     private $host;
     private $user;
@@ -29,6 +30,9 @@ class SchemaMetaInfoHelper
     const COLUMN_DEFAULT        = "columnDefault";
     const COLUMN_IS_NULLABLE    = "isNullable";
     const COLUMN_AUTO_INCREMENT = "autoIncrement";
+    const TABLE_COMMENT         = "tableComment";
+    const COLUMN_COMMENT        = "columnComment";
+
 
     /**
      * @var PDO
@@ -107,7 +111,7 @@ class SchemaMetaInfoHelper
         $primarykeys    = $this->primarykeysql();
         $uniqueIndexsql = $this->uniqueIndexsql();
 
-        $sql = "select TABLES.TABLE_NAME,primarys,uniques from TABLES";
+        $sql = "select TABLES.TABLE_NAME,TABLES.TABLE_COMMENT,primarys,uniques from TABLES";
         $sql .= " left join($primarykeys) tp on tp.table_name=TABLES.TABLE_NAME";
         $sql .= " left join($uniqueIndexsql) tu on tu.table_name=TABLES.TABLE_NAME";
         $sql .= " where TABLES.TABLE_SCHEMA=:schema";
@@ -126,6 +130,7 @@ class SchemaMetaInfoHelper
 
             $table[self::TABLE_NAME]          = $row['TABLE_NAME'];
             $tbname                           = $row['TABLE_NAME'];
+            $table[self::TABLE_COMMENT]       = $row['TABLE_COMMENT'];
             $table[self::TABLE_COLUMNS]       = $this->getColumns($schema, $tbname);
             $table[self::TABLE_PRIMARY_KEYS]  = $primaryKeys;
             $table[self::TABLE_UNIQUE_INDEXS] = $uniqueIndexs;
@@ -145,6 +150,7 @@ class SchemaMetaInfoHelper
             'COLUMN_TYPE',
             'COLUMN_DEFAULT',
             'IS_NULLABLE',
+            'COLUMN_COMMENT',
             'EXTRA',
         );
         $selectColumns = implode(',', $columnNames);
@@ -170,8 +176,10 @@ class SchemaMetaInfoHelper
             $column[self::COLUMN_DATA_TYPE]      = $row['DATA_TYPE'];
             $column[self::COLUMN_COLUMN_TYPE]    = $row['COLUMN_TYPE'];
             $column[self::COLUMN_DEFAULT]        = $row['COLUMN_DEFAULT'];
+            $column[self::COLUMN_COMMENT]        = $row['COLUMN_COMMENT'];
             $column[self::COLUMN_IS_NULLABLE]    = $row['IS_NULLABLE'] == "NO" ? false : true;
             $column[self::COLUMN_AUTO_INCREMENT] = strpos($row['EXTRA'], 'auto_increment') !== false;
+
 
             $columns[$row['COLUMN_NAME']] = $column;
         }
